@@ -64,7 +64,7 @@ int Ry, Rx, Ra, Ly, Lx, La;
 
 bool L1, R1, L2, R2, ue, sita, migi, hidari, maru, sankaku, sikaku, batu;
 
-bool maru_osi, R2_osi, sita_osi;
+bool maru_osi, R2_osi, sikaku_osi;
 
 double yaw;
 
@@ -253,22 +253,22 @@ int main(){
         // PIDなし
         if(!R2)R2_osi = false;
         if(!maru)maru_osi = false;
-        if(!sita)sita_osi = false;
+        if(!sikaku)sikaku_osi = false;
 
         
-        if(hidari){
+        if(hidari && !migi && !ue && !sita){
             // M1.targetRPM = 100;
             // M2.targetRPM = -100;
             sendData(10000, 10000);
             Lscissor.reset_accError();
             Rscissor.reset_accError();
-        }else if(migi){
+        }else if(migi && !hidari && !ue && !sita){
             // M1.targetRPM = -100;
             // M2.targetRPM = 100;
             sendData(-10000, -10000);
             Lscissor.reset_accError();
             Rscissor.reset_accError();
-        }else if(sikaku){
+        }else if(sita && !ue && !migi && !hidari){
             sendData(10000,0);
         }else if(batu){
             sendData(0, 10000);
@@ -278,13 +278,13 @@ int main(){
             sendData(0, 0);
         }
 
-        if(sita && hiena_mode == false && sita_osi == false){
+        if(sikaku && hiena_mode == false && sikaku_osi == false ){
             hiena_mode = true;
-            sita_osi = true;
+            sikaku_osi = true;
             asimawari[4] = 255;
-        }else if(sita && hiena_mode == true && sita_osi == false){
+        }else if(sikaku && hiena_mode == true && sikaku_osi == false ){
             hiena_mode = false;
-            sita_osi = true;
+            sikaku_osi = true;
             asimawari[4] = 0;
         }
 
@@ -386,7 +386,7 @@ int main(){
             low_magaru_mode = false;
             high_magaru_mode = false;
         }
-        if(ue){
+        if(ue && !sita && !migi && !hidari){
             high_mode = true;
         }else if(high_mode == true){
             slower_stop = true;
